@@ -1,0 +1,156 @@
+{
+  "id": "2000010100-1",
+  "frames": 40,
+  "entities": 23,
+  "samples": [
+    {
+      "frame": 0,
+      "entity": 0,
+      "x": 6000,
+      "y": 2665,
+      "s": 0,
+      "dir": 65535,
+      "o": 65535,
+      "flags": 12
+    },
+    {
+      "frame": 10,
+      "entity": 1,
+      "x": 5500,
+      "y": 2665,
+      "s": 400,
+      "dir": 27000,
+      "o": 65535,
+      "flags": 8
+    },
+    {
+      "frame": 33,
+      "entity": 3,
+      "x": 7500,
+      "y": 1370,
+      "s": 721,
+      "dir": 5631,
+      "o": 65535,
+      "flags": 8
+    },
+    {
+      "frame": 19,
+      "entity": 21,
+      "x": 7334,
+      "y": 2897,
+      "s": 501,
+      "dir": 16338,
+      "o": 65535,
+      "flags": 10
+    },
+    {
+      "frame": 20,
+      "entity": 21,
+      "x": 7348,
+      "y": 2848,
+      "s": 502,
+      "dir": 16301,
+      "o": 65535,
+      "flags": 10
+    },
+    {
+      "frame": 30,
+      "entity": 18,
+      "x": 7473,
+      "y": 1325,
+      "s": 631,
+      "dir": 8727,
+      "o": 65535,
+      "flags": 8
+    }
+  ],
+  "keyFrames": {
+    "start": 0,
+    "snap": 10,
+    "kick": null,
+    "handoff": null,
+    "throw": 24,
+    "arrival": 32,
+    "catch": 33,
+    "outcome": 33,
+    "received": null,
+    "contact": 35,
+    "tackle": 37,
+    "whistle": 37,
+    "end": 39
+  },
+  "ball": {
+    "segments": [
+      {
+        "from": 0,
+        "to": 9,
+        "mode": "tracked",
+        "z0": 0.1
+      },
+      {
+        "from": 10,
+        "to": 12,
+        "mode": "flight",
+        "z0": 0.1,
+        "z1": 1.0,
+        "apex": 0.054
+      },
+      {
+        "from": 13,
+        "to": 23,
+        "mode": "held",
+        "holder": 1
+      },
+      {
+        "from": 24,
+        "to": 33,
+        "mode": "flight",
+        "z0": 2.0,
+        "z1": 1.4,
+        "apex": 1.086
+      },
+      {
+        "from": 34,
+        "to": 39,
+        "mode": "held",
+        "holder": 3
+      }
+    ]
+  },
+  "situation": {
+    "quarter": 2,
+    "clockSeconds": 450,
+    "down": 2,
+    "yardsToGo": 6,
+    "goalToGo": false,
+    "possession": "AWY",
+    "offense": "away",
+    "yardline": "50",
+    "losX": 60.0,
+    "losSource": "tracked",
+    "lineToGainX": 66.0,
+    "scoreBefore": {
+      "home": 10,
+      "away": 7
+    }
+  },
+  "clock": {
+    "startFrame": 10,
+    "secondsAtStart": 450
+  },
+  "callouts": {
+    "offense": [
+      "11 personnel",
+      "Shotgun",
+      "3x1 trips right"
+    ],
+    "defense": [
+      "Nickel",
+      "6 in the box",
+      "Rushers not charted",
+      "Coverage not charted"
+    ],
+    "afterSnap": []
+  },
+  "status": "ship"
+}

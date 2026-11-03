@@ -1,0 +1,56 @@
+# Uses only synthetic, made-up test data. NFL data never enters git or CI.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    name: Pipeline tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Tests (the real-data tests skip here)
+        working-directory: pipeline
+        run: python -m pytest -rs
+      - name: Swift test fixtures match the pipeline
+        working-directory: pipeline
+        run: python -m all22 fixtures --check
+
+  ios:
+    name: PlaybackCore tests and app build
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select the newest Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          XCODE=$(ls -d /Applications/Xcode_*.app | grep -v -i beta | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+          swift --version
+      - name: PlaybackCore unit tests
+        run: swift test --package-path app/PlaybackCore
+      - name: Build the app for the iOS simulator
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project app/All22.xcodeproj \
+            -scheme All22 \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee xcodebuild.log | grep -E "error:|warning:|BUILD (SUCCEEDED|FAILED)|\*\*" || true
+          grep -q "BUILD SUCCEEDED" xcodebuild.log

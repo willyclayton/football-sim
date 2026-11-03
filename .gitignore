@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# NFL data never goes in git. This repo is public; the tracking data belongs
+# to the NFL and was released for the Big Data Bowl only. Everything below is
+# rebuilt from the raw files by `make bundle`.
+# ---------------------------------------------------------------------------
+/data/
+/build/
+
+# The app picks up the bundle from here; only the placeholder README is tracked.
+/app/PlayData/*
+!/app/PlayData/README.md
+
+# Belt and braces: no raw or packed data anywhere, whatever the folder.
+*.csv
+*.csv.gz
+*.parquet
+*.a22
+*.sqlite
+*.sqlite3
+# ...except the synthetic, made-up fixtures used by tests, and the review
+# ledger (play ids and your verdicts only).
+!/pipeline/tests/fixtures/**
+!/app/PlaybackCore/Tests/PlaybackCoreTests/Fixtures/**
+!/reviews/reviews.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcuserstate
+.swiftpm/
+.build/
+
+# macOS
+.DS_Store
