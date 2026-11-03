@@ -52,7 +52,7 @@ final class ViewerModel {
 
     private var anchorTime: Double = 0
     private var anchorDate = Date()
-    private var lastTickTime: Double = 0
+    @ObservationIgnored private var lastTickTime: Double = 0
 
     static let rates: [Double] = [0.25, 0.5, 1, 1.5, 2]
 
@@ -74,7 +74,11 @@ final class ViewerModel {
     }
 
     func togglePlay() {
-        isPlaying ? pause() : play()
+        if isPlaying {
+            pause()
+        } else {
+            play()
+        }
     }
 
     func play() {

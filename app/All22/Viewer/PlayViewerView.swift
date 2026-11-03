@@ -47,57 +47,73 @@ struct ViewerScreen: View {
 
     var body: some View {
         TimelineView(.animation(minimumInterval: nil, paused: !model.isPlaying)) { timeline in
-            let t = model.time(at: timeline.date)
-            GeometryReader { geo in
-                let snapshot = makeSnapshot(time: t, size: geo.size)
-                ZStack {
-                    background(for: snapshot.transform).equatable()
-                    PlayersLayer(snapshot: snapshot)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture(count: 2) { location in
-                    if let hit = hitTest(location, in: snapshot) {
-                        model.selected = hit
-                        model.followed = hit
-                        model.camera = .follow
-                    }
-                }
-                .onTapGesture { location in
-                    model.selected = hitTest(location, in: snapshot)
-                }
-                .gesture(panGesture(snapshot.transform))
-                .simultaneousGesture(zoomGesture(snapshot.transform))
-            }
-            .ignoresSafeArea()
-            .overlay(alignment: .top) {
-                HStack(alignment: .top) {
-                    CalloutChips(model: model, time: t)
-                    Spacer(minLength: 12)
-                    Scorebug(playback: model.playback, time: t)
-                }
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-            }
-            .overlay(alignment: .bottomLeading) {
-                if let selected = model.selected {
-                    PlayerCard(model: model, entity: selected, time: t)
-                        .padding(.leading, 12)
-                        .padding(.bottom, 64)
-                }
-            }
-            .overlay(alignment: .bottom) {
-                ControlsBar(model: model, time: t, close: close)
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, 4)
-            }
-            .onChange(of: timeline.date) { _, date in
-                model.tick(at: date)
-            }
+            screen(at: timeline.date)
         }
         .sensoryFeedback(.impact(weight: .light), trigger: model.hapticTick)
         .sheet(isPresented: $model.showInfo) {
             PlayInfoView(header: model.playback.header)
         }
+    }
+
+    private func screen(at date: Date) -> some View {
+        let t = model.time(at: date)
+        return field(time: t)
+            .overlay(alignment: .top) { topBar(time: t) }
+            .overlay(alignment: .bottomLeading) { playerCard(time: t) }
+            .overlay(alignment: .bottom) {
+                ControlsBar(model: model, time: t, close: close)
+                    .padding(.horizontal, 8)
+                    .padding(.bottom, 4)
+            }
+            .onChange(of: date) { _, newDate in
+                model.tick(at: newDate)
+            }
+    }
+
+    private func field(time t: Double) -> some View {
+        GeometryReader { geo in
+            let snapshot = makeSnapshot(time: t, size: geo.size)
+            ZStack {
+                background(for: snapshot.transform).equatable()
+                PlayersLayer(snapshot: snapshot)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(count: 2) { location in
+                follow(hitTest(location, in: snapshot))
+            }
+            .onTapGesture { location in
+                model.selected = hitTest(location, in: snapshot)
+            }
+            .gesture(panGesture(snapshot.transform))
+            .simultaneousGesture(zoomGesture(snapshot.transform))
+        }
+        .ignoresSafeArea()
+    }
+
+    private func topBar(time t: Double) -> some View {
+        HStack(alignment: .top) {
+            CalloutChips(model: model, time: t)
+            Spacer(minLength: 12)
+            Scorebug(playback: model.playback, time: t)
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
+    }
+
+    @ViewBuilder
+    private func playerCard(time t: Double) -> some View {
+        if let selected = model.selected {
+            PlayerCard(model: model, entity: selected, time: t)
+                .padding(.leading, 12)
+                .padding(.bottom, 64)
+        }
+    }
+
+    private func follow(_ entity: Int?) {
+        guard let entity else { return }
+        model.selected = entity
+        model.followed = entity
+        model.camera = .follow
     }
 
     // MARK: Drawing inputs
@@ -117,7 +133,8 @@ struct ViewerScreen: View {
         let header = pb.header
         let ball = pb.ballState(at: t)
         let followedState = model.followed.map { pb.state(ofEntity: $0, at: t) }
-        let rect = CameraFraming.rect(mode: model.camera, model: model, ballX: ball.x, ballY: ball.y,
+        let rect = CameraFraming.rect(mode: model.camera, playExtent: model.playExtent, freeRect: model.freeRect,
+                                      ballX: ball.x, ballY: ball.y,
                                       followedX: followedState?.x, followedY: followedState?.y)
         let transform = FieldTransform(rect: rect, size: size)
         let home = TeamPaint(team: header.game.home, home: true)

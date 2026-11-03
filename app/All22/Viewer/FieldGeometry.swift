@@ -48,19 +48,19 @@ struct FieldTransform: Equatable {
 enum CameraFraming {
     static let fullField = CGRect(x: -2, y: -2, width: Field.length + 4, height: Field.width + 4)
 
-    static func rect(mode: CameraMode, model: ViewerModel, ballX: Double, ballY: Double,
+    static func rect(mode: CameraMode, playExtent: CGRect, freeRect: CGRect?, ballX: Double, ballY: Double,
                      followedX: Double?, followedY: Double?) -> CGRect {
         switch mode {
         case .fullField:
             return fullField
         case .play:
-            return model.playExtent
+            return playExtent
         case .follow:
             let cx = followedX ?? ballX
             let cy = followedY ?? ballY
             return CGRect(x: cx - 20, y: cy - 12, width: 40, height: 24)
         case .free:
-            return model.freeRect ?? model.playExtent
+            return freeRect ?? playExtent
         }
     }
 }

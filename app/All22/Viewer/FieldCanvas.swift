@@ -66,7 +66,7 @@ struct FieldBackground: View, Equatable {
     let lineToGainX: Double?
     let showLines: Bool
 
-    static func == (a: FieldBackground, b: FieldBackground) -> Bool {
+    nonisolated static func == (a: FieldBackground, b: FieldBackground) -> Bool {
         a.transform == b.transform && a.losX == b.losX && a.lineToGainX == b.lineToGainX
             && a.showLines == b.showLines && a.leftEndZone == b.leftEndZone && a.rightEndZone == b.rightEndZone
     }
